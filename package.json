@@ -1,0 +1,29 @@
+{
+  "name": "ndse-homeworks-006-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "pm2 start index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tryhardy/ndse-homeworks-006-express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tryhardy/ndse-homeworks-006-express/issues"
+  },
+  "homepage": "https://github.com/tryhardy/ndse-homeworks-006-express#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pm2": "^5.2.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
