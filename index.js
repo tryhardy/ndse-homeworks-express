@@ -103,7 +103,7 @@ app.delete('/api/books/:id', (req, res) => {
      
     if(idx !== -1) {
         books.splice(idx, 1)
-        res.json(true)
+        res.json('ok')
     } 
     else {
         res.status(404)
