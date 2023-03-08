@@ -1,0 +1,45 @@
+<%- include('../port/layout-start', {title: title}) %>
+<%- include('../port/menu') %>
+
+<h1 class="mt-5 mb-5"><%= title %></h1>
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="card-title"><%= book.title %></h5>
+                <p class="card-text"><%= book.description %></p>
+
+                <% if(book.authors) { %>
+                    <p class="card-text"><b>Автор:</b> <%= book.authors %></p>
+                <% } %>
+
+                <% if(book.favorite) { %>
+                    <p class="card-text"><b>Добавили в избранное:</b> <%= book.favorite %></p>
+                <% } else { %>
+                    <p class="card-text"><b>Добавили в избранное:</b> 0</p>
+                <% } %>
+
+                <% if(book.fileBook) { %>
+                    <p class="card-text"><a href="/books/<%= book.id %>/download">Скачать книгу</a></p>
+                <% } %>
+
+                <div class="text-right">
+                    <a class="btn btn-sm btn-primary" href="/books/update/<%= book.id %>">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    <form action="/books/delete/<%= book.id %>" method="POST" class="d-inline">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<p class="mt-5"><a href="/books">Вернуться к списку</a></p>
+
+<%- include('../port/layout-end') %>

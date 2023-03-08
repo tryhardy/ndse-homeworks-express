@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/tryhardy/ndse-homeworks-006-express#readme",
   "dependencies": {
+    "ejs": "^3.1.8",
     "express": "^4.18.2",
     "file-type": "^18.2.1",
     "multer": "^1.4.5-lts.1",

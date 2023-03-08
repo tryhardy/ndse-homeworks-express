@@ -36,47 +36,34 @@ const stor = {
 /**
  * Получить список всех книг
  */
-router.get('/books', (req, res) => {
+router.get('/', (req, res) => {
     const {books} = stor
-    res.json(books)
+
+    res.render("book/index", {
+        title: "Книги",
+        items: books,
+    });
 })
 
 /**
- * Получить книгу по id
+ * Форма добавления новой книги
  */
-router.get('/books/:id', (req, res) => {
-    const {books} = stor
-    const {id} = req.params
-    const idx = books.findIndex(el => el.id === id)
-
-    if( idx !== -1) {
-        res.json(books[idx])
-    } 
-})
+router.get('/create', (req, res) => {
+    res.render("book/create", {
+        title: "Добавить новую книгу",
+        book: {},
+    });
+});
 
 /**
- * Скачать книгу по id
- */
-router.get('/books/:id/download', (req, res) => {
-    const {books} = stor
-    const {id} = req.params
-    const idx = books.findIndex(el => el.id === id)
-
-    if(idx !== -1) {
-        const filePath = path.join(__dirname, '', '..')
-        const file = filePath + '\\public\\books\\1677968090897-lcXJug4fIZ3bi6IcZlRAaPvaxysKkB1BH69RHr7WuxJ7vMo8HLpV9clpZMXGU4mbP2wLfJBtJhCdwQyOCIISFTW8.jpg';
-        res.download(file);
-    } 
-})
-
-/**
- * Добавить новую книгу
+ * Сохранить новую книгу
  */
 router.post(
-    '/books/', fileMulter.single('fileBook'), (req, res) => {
+    '/create', fileMulter.single('fileBook'), (req, res) => {
     const {books} = stor
     const {title, description, authors, favorite, fileCover, fileName} = req.body
-    let fileBook = null
+    let fileBook = ''
+
     if(req.file){
         const {path} = req.file
         fileBook = path;
@@ -86,13 +73,31 @@ router.post(
     books.push(newBook)
 
     res.status(201)
-    res.json(newBook)
+    res.render("book/success", {
+        title: "Ура!",
+        message: "Книга успешно добавлена. <a href='/books/" + newBook.id + "'>Просмотреть</a>",
+    });
 })
 
 /**
  * Изменить книгу
  */
-router.put('/books/:id', fileMulter.single('fileBook'), (req, res) => {
+router.get('/update/:id', (req, res) => {
+    const {books} = stor
+    const {id} = req.params
+    const idx = books.findIndex(el => el.id === id)
+
+    if (idx === -1) {
+        res.redirect('/404');
+    } 
+
+    res.render("book/update", {
+        title: "Изменить книгу - " + books[idx]['title'],
+        book: books[idx],
+    });
+})
+
+router.post('/update/:id', fileMulter.single('fileBook'), (req, res) => {
     const {books} = stor
     const {title, description, authors, favorite, fileCover, fileName} = req.body
     const {id} = req.params
@@ -105,34 +110,84 @@ router.put('/books/:id', fileMulter.single('fileBook'), (req, res) => {
         fileBook = path;
     }
 
-    if (idx !== -1) {
-        books[idx] = {
-            ...books[idx],
-            title,
-            description, 
-            authors, 
-            favorite, 
-            fileCover, 
-            fileName,
-            fileBook
-        }
-
-        res.json(books[idx])
+    if (idx === -1) {
+        res.redirect('/404');
     } 
+
+    books[idx] = {
+        ...books[idx],
+        title,
+        description, 
+        authors, 
+        favorite, 
+        fileCover, 
+        fileName,
+        fileBook
+    }
+
+    res.status(201)
+    res.render("book/success", {
+        title: "Ура!",
+        message: "Книга успешно обновлена. <a href='/books/" + books[idx].id + "'>Просмотреть</a>",
+    });
 })
 
 /**
  * Удалить книгу
  */
-router.delete('/books/:id', (req, res) => {
+router.post('/delete/:id', (req, res) => {
     const {books} = stor
     const {id} = req.params
     const idx = books.findIndex(el => el.id === id)
      
     if(idx !== -1) {
         books.splice(idx, 1)
-        res.json('ok')
+        
+        res.status(201)
+        res.render("book/success", {
+            title: "Ура!",
+            message: "Книга успешно удалена. <a href='/books/'>Вернуться к списку</a>",
+        });
+    }
+    else {
+        res.redirect('/404');
+    }
+})
+
+/**
+ * Получить книгу по id
+ */
+router.get('/:id', (req, res) => {
+    const {books} = stor
+    const {id} = req.params
+    const idx = books.findIndex(el => el.id === id)
+
+    if (idx === -1) {
+        res.redirect('/404');
     } 
+
+    res.render("book/view", {
+        title: books[idx]['title'],
+        book: books[idx],
+    });
+})
+
+/**
+ * Скачать книгу по id
+ */
+router.get('/:id/download', (req, res) => {
+    const {books} = stor
+    const {id} = req.params
+    const idx = books.findIndex(el => el.id === id)
+
+    if(idx !== -1) {
+        const filePath = path.join(__dirname, '', '..')
+        const file = filePath + "\\" + books[idx]['fileBook'];
+        res.download(file);
+    } 
+    else {
+        res.redirect('/404');
+    }
 })
 
 module.exports = router
